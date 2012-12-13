@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Services;
 using System.Linq;
 using System.Security.Claims;
 using System.Web;
@@ -27,7 +28,20 @@ namespace SampleRpWebApp
             AuthConfig.RegisterAuth();
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Name;
-            
+        }
+
+        void WSFederationAuthenticationModule_SessionSecurityTokenCreated(object sender, SessionSecurityTokenCreatedEventArgs e)
+        {
+            //Manipulate session token here, for example, changing its expiration value
+            System.Diagnostics.Trace.WriteLine("Handling SessionSecurityTokenCreated event");
+            System.Diagnostics.Trace.WriteLine("Key valid from: " + e.SessionToken.KeyEffectiveTime);
+            System.Diagnostics.Trace.WriteLine("Key expires on: " + e.SessionToken.KeyExpirationTime);
+            e.SessionToken.IsReferenceMode = true;
+        }
+
+        private void WSFederationAuthenticationModule_SignedOut(object sender, EventArgs e)
+        {
+            Response.Redirect("~/CleanUp.aspx", false);
         }
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
 using SampleRpWebApp.Filters;
 using SampleRpWebApp.Models;
+using System.IdentityModel.Services;
 
 namespace SampleRpWebApp.Controllers
 {
@@ -53,6 +54,15 @@ namespace SampleRpWebApp.Controllers
         public ActionResult LogOff()
         {
             WebSecurity.Logout();
+
+            if (this.User.Identity.IsAuthenticated)
+            {
+                FederatedAuthentication.WSFederationAuthenticationModule.SignOut(false);
+
+                string issuer = FederatedAuthentication.WSFederationAuthenticationModule.Issuer;
+                var signOut = new SignOutRequestMessage(new Uri(issuer));
+                return this.Redirect(signOut.WriteQueryString());
+            }
 
             return RedirectToAction("Index", "Home");
         }
