@@ -1,5 +1,9 @@
 ﻿@{
     ViewBag.Title = "Home Page";
+    var principal = HttpContext.Current.User as System.Security.Claims.ClaimsPrincipal;
+    var identity = principal.Identity as System.Security.Claims.ClaimsIdentity;
+    var classes = new[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+    int i = 0;
 }
 @section featured {
     <section class="featured">
@@ -20,7 +24,7 @@
 }
 <h3>We suggest the following:</h3>
 <ol class="round">
-    <li class="one">
+    <li class="@classes[@i++]">
         <h5>Getting Started</h5>
         ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
         enables a clean separation of concerns and that gives you full control over markup
@@ -30,16 +34,27 @@
         <a href="http://go.microsoft.com/fwlink/?LinkId=245151">Learn more…</a>
     </li>
 
-    <li class="two">
+    <li class="@classes[@i++]">
         <h5>Add NuGet packages and jump-start your coding</h5>
         NuGet makes it easy to install and update free libraries and tools.
         <a href="http://go.microsoft.com/fwlink/?LinkId=245153">Learn more…</a>
     </li>
 
-    <li class="three">
+    <li class="@classes[@i++]">
         <h5>Find Web Hosting</h5>
         You can easily find a web hosting company that offers the right mix of features
         and price for your applications.
         <a href="http://go.microsoft.com/fwlink/?LinkId=245157">Learn more…</a>
     </li>
+    @{
+        foreach (var claim in identity.Claims)
+        {
+          <li class="@classes[@i++]">
+              <h5>@claim.Type</h5>
+              @claim.Value
+          </li>
+        }
+    }
+
+
 </ol>
